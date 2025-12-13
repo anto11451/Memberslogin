@@ -140,7 +140,7 @@ export default function About() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                Our Core <span className="text-accent neon-text-blue">Values</span>
+                Our Core <span className="text-neon-blue">Values</span>
               </motion.h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {values.map((value, index) => {

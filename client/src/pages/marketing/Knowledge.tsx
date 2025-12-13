@@ -482,7 +482,7 @@ export default function Knowledge() {
 
                 <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                   <h1 className="text-4xl md:text-6xl font-display font-bold mb-4">
-                    Knowledge <span className="text-accent neon-text-blue">Hub</span>
+                    Knowledge <span className="text-neon-blue">Hub</span>
                   </h1>
                   <p className="text-muted-foreground max-w-xl mx-auto">
                     Learn the science behind fitness in simple, easy-to-understand terms

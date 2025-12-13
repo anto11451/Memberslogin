@@ -120,7 +120,7 @@ export default function LandingPage() {
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold">
               <span className="text-foreground">Cap's </span>
-              <span className="text-primary neon-text">FITNESS</span>
+              <span className="text-primary text-neon-green animate-neon-pulse">FITNESS</span>
             </h1>
 
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
@@ -233,7 +233,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">
-              Quick <span className="text-accent neon-text-blue">Links</span>
+              Quick <span className="text-neon-blue">Links</span>
             </h2>
           </motion.div>
 
