@@ -387,6 +387,12 @@ export default function Dashboard() {
               <Button className="w-full bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 font-bold">
                 OPEN MACRO CALCULATOR
               </Button>
+              <Button className="w-full bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 font-bold">
+                Explore Receipes
+              </Button>
+              <Button className="w-full bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 font-bold">
+                Explore Protein hacks
+              </Button>
             </Card>
           </Link>
         </div>
