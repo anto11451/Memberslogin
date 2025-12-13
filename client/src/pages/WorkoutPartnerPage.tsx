@@ -1526,6 +1526,7 @@ function WeightWorkoutActive({
   onToggleVoice,
   onComplete,
   onStop,
+  totalCycles = 1,
 }: {
   plan: WorkoutPlan;
   voiceEnabled: boolean;
@@ -1533,14 +1534,18 @@ function WeightWorkoutActive({
   onComplete: (stats: {
     totalTime: number;
     exercisesCompleted: number;
+    cyclesCompleted?: number;
   }) => void;
   onStop: () => void;
+  totalCycles?: number;
 }) {
   const [currentExerciseIdx, setCurrentExerciseIdx] = useState(0);
   const [currentSet, setCurrentSet] = useState(1);
+  const [currentCycle, setCurrentCycle] = useState(1);
   const [isResting, setIsResting] = useState(false);
   const [setInProgress, setSetInProgress] = useState(false);
   const [restTime, setRestTime] = useState(60);
+  const [newCycleStarting, setNewCycleStarting] = useState(false);
 
   const { speak } = useVoiceCoach(voiceEnabled);
   const setTimer = useStopwatch();
@@ -1555,6 +1560,7 @@ function WeightWorkoutActive({
   const totalExercises = plan.exercises.length;
   const isLastSet = currentSet >= currentExercise.sets;
   const isLastExercise = currentExerciseIdx >= totalExercises - 1;
+  const isLastCycle = currentCycle >= totalCycles;
 
   useEffect(() => {
     totalTimer.start();
@@ -1610,11 +1616,22 @@ function WeightWorkoutActive({
     setSetInProgress(false);
 
     if (isLastSet && isLastExercise) {
-      speak("Workout complete! Amazing work!");
-      onComplete({
-        totalTime: totalTimer.time,
-        exercisesCompleted: totalExercises,
-      });
+      if (isLastCycle) {
+        speak("Workout complete! Amazing work!");
+        onComplete({
+          totalTime: totalTimer.time,
+          exercisesCompleted: totalExercises * totalCycles,
+          cyclesCompleted: totalCycles,
+        });
+      } else {
+        speak(`Cycle ${currentCycle} complete! Get ready for cycle ${currentCycle + 1}!`);
+        setCurrentCycle((prev) => prev + 1);
+        setCurrentExerciseIdx(0);
+        setCurrentSet(1);
+        setNewCycleStarting(true);
+        setIsResting(true);
+        setRestCountdown(restTime);
+      }
     } else if (isLastSet) {
       speak(`Exercise complete. Rest for ${restTime} seconds.`);
       setIsResting(true);
@@ -1629,6 +1646,13 @@ function WeightWorkoutActive({
 
   const handleRestComplete = () => {
     setIsResting(false);
+    
+    if (newCycleStarting) {
+      setNewCycleStarting(false);
+      speak(`Starting cycle ${currentCycle}! First up: ${plan.exercises[0]?.name}`);
+      return;
+    }
+    
     speak("Next set starts now!");
 
     if (isLastSet) {
@@ -1734,6 +1758,11 @@ function WeightWorkoutActive({
             exit={{ opacity: 0, scale: 0.9 }}
             className="text-center"
           >
+            {totalCycles > 1 && (
+              <div className="text-sm text-accent font-medium mb-2">
+                Cycle {currentCycle} of {totalCycles}
+              </div>
+            )}
             <div className="text-sm text-muted-foreground mb-2">
               Exercise {currentExerciseIdx + 1} of {totalExercises}
             </div>
@@ -1786,6 +1815,8 @@ function AbsCardioActive({
   onToggleVoice,
   onComplete,
   onStop,
+  totalCycles = 1,
+  mode,
 }: {
   plan: WorkoutPlan;
   voiceEnabled: boolean;
@@ -1793,13 +1824,18 @@ function AbsCardioActive({
   onComplete: (stats: {
     totalTime: number;
     exercisesCompleted: number;
+    cyclesCompleted?: number;
   }) => void;
   onStop: () => void;
+  totalCycles?: number;
+  mode?: WorkoutMode;
 }) {
   const [currentExerciseIdx, setCurrentExerciseIdx] = useState(0);
+  const [currentCycle, setCurrentCycle] = useState(1);
   const [isResting, setIsResting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [newCycleStarting, setNewCycleStarting] = useState(false);
 
   const { speak } = useVoiceCoach(voiceEnabled);
   const totalTimer = useStopwatch();
@@ -1808,6 +1844,7 @@ function AbsCardioActive({
   const currentExercise = plan.exercises[currentExerciseIdx];
   const totalExercises = plan.exercises.length;
   const isLastExercise = currentExerciseIdx >= totalExercises - 1;
+  const isLastCycle = currentCycle >= totalCycles;
 
   useEffect(() => {
     totalTimer.start();
@@ -1888,12 +1925,23 @@ function AbsCardioActive({
 
   const handleExerciseComplete = () => {
     if (isLastExercise) {
-      speak("Workout complete! You crushed it!");
-      totalTimer.stop();
-      onComplete({
-        totalTime: totalTimer.time,
-        exercisesCompleted: totalExercises,
-      });
+      if (isLastCycle) {
+        speak("Workout complete! You crushed it!");
+        totalTimer.stop();
+        onComplete({
+          totalTime: totalTimer.time,
+          exercisesCompleted: totalExercises * totalCycles,
+          cyclesCompleted: totalCycles,
+        });
+      } else {
+        speak(`Cycle ${currentCycle} complete! Get ready for cycle ${currentCycle + 1}!`);
+        setCurrentCycle((prev) => prev + 1);
+        setCurrentExerciseIdx(0);
+        setNewCycleStarting(true);
+        const restDuration = 15;
+        setIsResting(true);
+        startCountdown(restDuration, true);
+      }
     } else {
       const restDuration = currentExercise.restDuration || 15;
       speak(`Rest for ${restDuration} seconds`);
@@ -1903,6 +1951,16 @@ function AbsCardioActive({
   };
 
   const handleNextExercise = () => {
+    if (newCycleStarting) {
+      setNewCycleStarting(false);
+      const firstEx = plan.exercises[0];
+      speak(`Starting cycle ${currentCycle}! Let's start ${firstEx.name}`);
+      setCountdown(firstEx.duration || 30);
+      setIsResting(false);
+      startCountdown(firstEx.duration || 30, false);
+      return;
+    }
+    
     setCurrentExerciseIdx((prev) => prev + 1);
     const nextEx = plan.exercises[currentExerciseIdx + 1];
     if (nextEx) {
@@ -1962,6 +2020,11 @@ function AbsCardioActive({
       />
 
       <div className="text-center">
+        {totalCycles > 1 && (
+          <div className="text-sm text-accent font-medium mb-2">
+            Cycle {currentCycle} of {totalCycles}
+          </div>
+        )}
         <div className="text-sm text-muted-foreground mb-2">
           {isResting
             ? "REST"
