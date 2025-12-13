@@ -320,7 +320,7 @@ export default function Dashboard() {
         {/* This entire block is copied untouched from your new Dashboard */}
 
         <div className="grid md:grid-cols-2 gap-6">
-          <Link href="/app/workout-partner">
+          <Link href="/app/plans">
             <Card className="bg-card/40 border-white/5 p-6 relative overflow-hidden group cursor-pointer hover:border-primary/50 transition-all h-full">
               <div className="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/20 transition-all" />
               <div className="flex justify-between items-start mb-4">
@@ -345,7 +345,7 @@ export default function Dashboard() {
                 45–60 min session ready
               </p>
               <Button className="w-full bg-primary/10 text-primary hover:bg-primary hover:text-black border border-primary/20 font-bold">
-                START WORKOUT PARTNER
+                VIEW WORKOUT PLANS
               </Button>
             </Card>
           </Link>

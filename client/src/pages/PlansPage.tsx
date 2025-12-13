@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import Layout from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -597,12 +598,41 @@ interface PlanGroup {
 }
 
 export default function PlansPage() {
+  const [, setLocation] = useLocation();
   const [programs, setPrograms] = useState<PlanGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<DetailedPlan | null>(null);
   const [activeDay, setActiveDay] = useState<number>(1);
   const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
+
+  const handleStartWorkout = (day: PlanDay) => {
+    const parseReps = (reps: string): number => {
+      const match = reps.match(/(\d+)/);
+      return match ? parseInt(match[1]) : 10;
+    };
+    
+    const parseWeight = (weight: string | undefined): number | undefined => {
+      if (!weight) return undefined;
+      const match = weight.match(/(\d+)/);
+      return match ? parseInt(match[1]) : undefined;
+    };
+    
+    const workoutPlan = {
+      id: `plan-${selectedPlan?.id}-day-${day.dayNumber}`,
+      name: `${selectedPlan?.shortName} - ${day.focus}`,
+      type: 'weight' as const,
+      exercises: day.exercises.map((ex, idx) => ({
+        id: String(idx + 1),
+        name: ex.name,
+        sets: ex.sets,
+        reps: parseReps(ex.reps),
+        weight: parseWeight(ex.weight),
+      })),
+    };
+    localStorage.setItem('incomingWorkoutPlan', JSON.stringify(workoutPlan));
+    setLocation('/app/workout-partner');
+  };
 
   useEffect(() => {
     async function fetchPrograms() {
@@ -789,7 +819,10 @@ export default function PlansPage() {
                       )}
                     </div>
                     {!currentDay.isRest && (
-                      <Button className="bg-secondary text-white hover:bg-secondary/80">
+                      <Button 
+                        className="bg-secondary text-white hover:bg-secondary/80"
+                        onClick={() => handleStartWorkout(currentDay)}
+                      >
                         <Play className="w-4 h-4 mr-2" /> Start Workout
                       </Button>
                     )}

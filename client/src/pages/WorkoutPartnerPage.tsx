@@ -2452,9 +2452,26 @@ function CustomWorkoutBuilder({
 }
 
 export default function WorkoutPartnerPage() {
-  const [step, setStep] = useState<AppStep>("landing");
-  const [mode, setMode] = useState<WorkoutMode>("weight");
-  const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
+  const incomingPlanData = localStorage.getItem("incomingWorkoutPlan");
+  let initialPlan: WorkoutPlan | null = null;
+  let initialMode: WorkoutMode = "weight";
+  let initialStep: AppStep = "landing";
+  
+  if (incomingPlanData) {
+    try {
+      initialPlan = JSON.parse(incomingPlanData);
+      initialMode = initialPlan?.type || "weight";
+      initialStep = "edit-workout";
+      localStorage.removeItem("incomingWorkoutPlan");
+    } catch (e) {
+      console.error("Failed to parse incoming workout plan:", e);
+      localStorage.removeItem("incomingWorkoutPlan");
+    }
+  }
+  
+  const [step, setStep] = useState<AppStep>(initialStep);
+  const [mode, setMode] = useState<WorkoutMode>(initialMode);
+  const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(initialPlan);
   const [customPlans, setCustomPlans] = useState<WorkoutPlan[]>([]);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [workoutStats, setWorkoutStats] = useState({
