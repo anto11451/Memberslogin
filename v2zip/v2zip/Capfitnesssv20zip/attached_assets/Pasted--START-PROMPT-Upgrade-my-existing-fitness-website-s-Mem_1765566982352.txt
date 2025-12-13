@@ -1,0 +1,365 @@
+# **START PROMPT**
+
+Upgrade my existing fitness website’s **Members Login Dashboard** using the Google Sheet API (below) and the sheet structure I am providing.
+
+⚠️ Do NOT create a new project — only modify the current codebase.
+⚠️ Keep all routes, components, and styling exactly as they are.
+
+---
+
+# **GOOGLE SHEET API**
+
+All user, admin, progress, workout, recipe, and program data must sync through this endpoint:
+
+**API Endpoint:**
+`https://script.google.com/macros/s/AKfycbyaOcyGLPkxYEN2EeQRH0PaIsxxQdek8t4zhb2gfe2lWdtE7wya2llV8Etw1ZmlixPQ/exec`
+
+---
+
+# **GOOGLE SHEET STRUCTURE (VERY IMPORTANT)**
+
+Use these sheets and columns exactly as listed:
+
+---
+
+## **1. USERS (Sheet: "Users")**
+
+Columns:
+
+* user_id
+* email
+* password
+* name
+* gender
+* age
+* height_cm
+* starting_weight
+* current_weight
+* goal_weight
+* membership_type
+* membership_duration
+* plan_start_date
+* plan_end_date
+* next_session_date
+* calorie_target
+* protein_target
+* carbs_target
+* fats_target
+* workout_schedule_json
+* avatar_type
+* last_updated
+
+This sheet powers:
+
+* Login
+* Profile page
+* Dashboard body profile
+* Admin user creation/editing
+* Workout plan assignment
+* Membership dates
+
+---
+
+## **2. USER PROGRESS (Sheet: "User_Progress")**
+
+Use this for:
+
+* Daily Tracker
+* Fuel Tracker
+* Calories in/out
+* Steps
+* Water intake
+* Macro totals
+  Everything here must stay in sync with the Dashboard.
+
+---
+
+## **3. USER STREAKS (Sheet: "User_Streaks")**
+
+Use for:
+
+* Streak count
+* Milestone completion
+* Medal rewards
+* Admin milestone updates
+
+---
+
+## **4. GLOBAL WORKOUTS (Sheet: "Global_Workouts")**
+
+Contains:
+
+* All exercises
+* Categories (Legs, Arms, Cardio, Stretching)
+* Exercise names
+* Instruction steps
+* Sets × reps
+* GIF/video link
+
+Use this for:
+
+* Workout Repository
+* Plans Page (day-wise workouts)
+* Workout Partner feature
+
+---
+
+## **5. GLOBAL RECIPES (Sheet: "Global_Recipes")**
+
+Contains:
+
+* Recipes
+* Ingredients
+* Images
+* Nutrition values
+
+Use this in:
+
+* Nutrition Plan Page
+* Admin content management
+
+---
+
+## **6. PROGRAMS (Sheet: "Programs")**
+
+Contains:
+
+* Structured workout plans
+* Day-wise routines
+* JSON schedule mapping
+  Use this for:
+* Push/Pull
+* Upper-Lower
+* Full Body
+* Beginner/Advanced
+* Day-wise workout view
+
+---
+
+---
+
+# ✔️ **NOW APPLY THE FOLLOWING FEATURE UPGRADES**
+
+---
+
+# **0. ADMIN PAGE (inside members area)**
+
+Protect with:
+
+**Username:** `iamcap`
+**Password:** `Sunshine@123`
+
+### **Admin Capabilities**
+
+### **A. User Management**
+
+* Create new users with:
+
+  * weight
+  * height
+  * workout plan
+  * membership duration
+* Auto-generate login credentials
+* Insert user into **Users** sheet
+* Auto-create entries in:
+
+  * User_Progress
+  * User_Streaks
+* Show this data on user profile page
+
+---
+
+### **B. Editing Tools**
+
+Admin can edit fields of the **Users sheet**:
+
+* plan_start_date
+* plan_end_date
+* next_session_date
+* milestones
+* medal rewards
+
+Streak/milestone updates must write to **User_Streaks**.
+
+---
+
+### **C. Content Management**
+
+Admin can edit these sheets:
+
+| Feature           | Sheet                   |
+| ----------------- | ----------------------- |
+| Recipes           | Global_Recipes          |
+| Workout Plans     | Programs                |
+| Protein Hack Blog | New blog data structure |
+
+Admin must be able to upload images (via URL or base64).
+
+---
+
+---
+
+# **1. DASHBOARD UPDATES**
+
+### **A. Sync Daily Tracker ↔ Fuel Tracker**
+
+Daily Tracker & Fuel Tracker must fetch/write to **User_Progress** sheet.
+
+Both must:
+
+* Use ONE shared data source
+* Auto-update each other
+* Be displayed in Dashboard summary
+* Clicking Fuel Tracker → go to Nutrition Page (macro calculator + tracker)
+
+---
+
+### **B. Remove These Components Entirely**
+
+Remove from UI AND backend:
+
+1. Protein Goal
+2. Your Plan
+3. Ideal Weight
+4. Recommended Protein
+
+---
+
+### **C. Sync Body Profile With Profile Page**
+
+Dashboard must read directly from **Users sheet**:
+
+* age
+* weight
+* height
+* gender
+* membership_type
+* avatar_type
+
+Updating profile must write to Google Sheet → refresh dashboard.
+
+No local state allowed.
+
+---
+
+---
+
+# **2. WORKOUT REPOSITORY PAGE**
+
+Use data from **Global_Workouts** sheet.
+
+Add categories:
+
+* Legs
+* Arms
+* Cardio
+* Stretching
+
+Each entry must display:
+
+* Exercise name
+* Instructions
+* Sets × reps
+* GIF/video link
+
+---
+
+---
+
+# **3. PLANS PAGE (Day-wise + Detailed View)**
+
+Use the structure from **Programs sheet**.
+
+### A. Show day-wise routine
+
+Example:
+
+* Monday → Chest + Triceps
+* Tuesday → Back + Biceps
+* Wednesday → Rest
+* Thursday → Legs
+* Friday → Shoulders
+
+### B. When user clicks a day:
+
+Show full detailed workout:
+
+* Exercises
+* Sets × reps
+* Instructions
+* GIF/video
+* If rest: show “Rest Day – No workout today.”
+
+### C. Apply to ALL programs:
+
+* Push–Pull
+* Upper–Lower
+* Full Body
+* Beginner
+* Advanced
+
+---
+
+---
+
+# **4. WORKOUT PARTNER FEATURE**
+
+When user selects workout mode + routine:
+
+* Show list of exercises
+* Add voice countdown
+* Fix countdown bug (“3, 2, 1” cutting off)
+* Add spacing before transitions
+
+---
+
+---
+
+# **5. NUTRITION PLAN PAGE (Macro Calculator Update)**
+
+Add these foods with:
+
+* Calories
+* Protein
+* Carbs
+* Fats
+* Serving size
+
+### Foods to add:
+
+Rice
+Brown rice
+Roti
+Chapati
+Dal
+Chicken breast
+Chicken curry
+Paneer
+Tofu
+Mutton
+Egg (boiled/omelette)
+Fish
+Milk
+Curd
+Sprouts
+Poha
+Upma
+Idli
+Dosa
+Oats
+Banana
+Apple
+Peanut butter
+Whey protein
+
+Macro calculator must:
+
+* Let user choose items + quantity
+* Auto-calc macros
+* Display summary
+* Save daily intake → write to **User_Progress** sheet
+
+---
+
+# **END PROMPT**
+
