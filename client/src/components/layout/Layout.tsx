@@ -69,18 +69,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           />
         ))}
       </nav>
-
-      <div className="p-4 border-t border-white/5">
-        <div className="p-4 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-white/10">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Current Plan</p>
-          <p className="font-display font-bold text-sm text-white">Hybrid Athlete</p>
-          <div className="w-full bg-black/40 h-1.5 rounded-full mt-2 overflow-hidden">
-            <div className="bg-primary h-full w-[65%] shadow-[0_0_10px_rgba(0,255,157,0.5)]" />
-          </div>
-          <p className="text-[10px] text-right text-primary mt-1">Week 4 / 8</p>
-        </div>
-      </div>
-    </div>
   );
 
   return (
